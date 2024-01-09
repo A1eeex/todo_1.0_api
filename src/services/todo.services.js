@@ -33,21 +33,20 @@ export const update = ({ id, title, completed }) => {
   return todo;
 };
 
+export const updateManyTodos = (items) => {
+  items.forEach((item) => {
+    const { id, title, completed } = item;
+    const curentTodo = getById(id);
+    if (curentTodo) {
+      Object.assign(curentTodo, { completed, title });
+    }
+  });
+};
+
 export const deleteTodo = (id) => {
   todos = todos.filter((todos) => todos.id !== id);
 };
 
 export const deleteManyTodos = (ids) => {
   todos = todos.filter((todo) => !ids.includes(todo.id));
-};
-
-export const updateManyTodos = (items) => {
-
-  items.forEach((item) => {
-    const { id, title, completed } = item;
-    const curentTodo = getById(id)
-    if (curentTodo) {
-      Object.assign(curentTodo, { completed, title });
-    }
-  });
 };
