@@ -1,12 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
 import { sequelize } from './db.js';
 import { DataTypes, Op } from 'sequelize';
 
-let todos = [
-  { id: '1', title: 'express', completed: true },
-  { id: '2', title: 'node', completed: true },
-  { id: '3', title: 'app', completed: false },
-];
+// let todos = [
+//   { id: '1', title: 'express', completed: true },
+//   { id: '2', title: 'node', completed: true },
+//   { id: '3', title: 'app', completed: false },
+// ];
 
 const Todo = sequelize.define(
   'Todo',
@@ -34,13 +33,22 @@ const Todo = sequelize.define(
 );
 
 export const getAll = async () => {
-  const todos_data = await Todo.findAll();
-  return todos_data;
+  try {
+    const todos_data = await Todo.findAll();
+    return todos_data;
+  } catch (error) {
+    console.error('Error fetching todos:', error);
+    throw error; // Прокинути помилку далі, щоб забезпечити її обробку у вищих рівнях додатку
+  }
 };
 
 export const getById = async (id) => {
-  return Todo.findByPk(id);
-  // return todos.find((todo) => todo.id === id) || null;
+  try {
+    return await Todo.findByPk(id);
+  } catch (error) {
+    console.error(`Error fetching todo with id ${id}:`, error);
+    throw error;
+  }
 };
 
 export const createTodo = async (title) => {
@@ -83,10 +91,6 @@ export const updateManyTodos = async (items) => {
     }
   });
 
-  // await Todo.bulkCreate(items, {
-  //   updateOnDuplicate: ['title', 'completed'],
-  // });
-
   //  const updateItems = async (item) => {
   //     const { id, title, completed } = item;
   //     const curentTodo = getById(id);
@@ -101,8 +105,6 @@ export const updateManyTodos = async (items) => {
 };
 
 export const deleteTodo = async (id) => {
-  // todos = todos.filter((todos) => todos.id !== id);
-
   await Todo.destroy({
     where: {
       id,
@@ -111,7 +113,6 @@ export const deleteTodo = async (id) => {
 };
 
 export const deleteManyTodos = async (ids) => {
-  // todos = todos.filter((todo) => !ids.includes(todo.id));
   await Todo.destroy({
     where: {
       id: {
